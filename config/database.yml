@@ -1,0 +1,23 @@
+development:
+  adapter: mysql2
+  database: animatedgif_development
+  encoding: utf8
+  pool: 5
+  username: root
+  password: invalid
+  socket: /var/run/mysqld/mysqld.sock
+
+test:
+  adapter: mysql2
+  database: animatedgif_test
+  encoding: utf8
+  pool: 5
+  username: root
+  password: invalid
+  socket: /var/run/mysqld/mysqld.sock
+
+production:
+  adapter: postgresql
+  database: animatedgif_production
+  pool: 5
+  timeout: 5000
