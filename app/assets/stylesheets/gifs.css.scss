@@ -12,8 +12,17 @@
 }
 #tag_cloud {
   width: 400px;
+  word-wrap: break-word;
   line-height: 1.6em;
   .s { font-size: 0.8em; }
   .m { font-size: 1.2em; }
   .l { font-size: 1.8em; }
+}
+.text-muted {
+    padding-bottom: 20px;
+}
+.text-muted a {
+    padding: 30px;
+    color: #333;
+    font-size: 20px;
 }
