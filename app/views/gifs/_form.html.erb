@@ -4,18 +4,36 @@
       <h2><%= pluralize(@gif.errors.count, "error") %> prohibited this gif from being saved:</h2>
 
       <ul>
-      <% @gif.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+      <% @gif.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
       <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :url %><br>
-    <%= f.text_field :url %>
+  <div class="form-group">
+    <div class="row">
+      <div class="col-sm-6">
+        <%= f.text_field :url, placeholder: "URL", class: "form-control", autofocus: true %>
+      </div>
+      <div class="col-sm-6">
+        <%= f.text_field :tag_list, placeholder: "Tags: computer, money, sloth", class: "form-control"%>
+      </div>
+    </div>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+
+  <div class="form-actions">
+    <% if @gif.persisted? %>
+      <div class="pull-left">
+        <%= link_to gif_path(@gif), method: :delete, title: "Delete this gif", tabindex: -1, data: {toggle: "tooltip", confirm: "Are you sure you want to delete this magical gif?"} do %>
+          <i class="icon-remove-circle"></i>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="text-right">
+      <%= f.submit "Save This Magic", class: "btn btn-primary" %>
+      <%= f.submit "Save And Tag More", class: "btn btn-default" %>
+    </div>
   </div>
 <% end %>

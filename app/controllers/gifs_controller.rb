@@ -1,15 +1,49 @@
 class GifsController < ApplicationController
   before_action :set_gif, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :tagged, :show, :random]
 
   # GET /gifs
   # GET /gifs.json
   def index
-    @gifs = Gif.all
+    @gifs = Gif.sorted.paginate(page: params[:page], per_page: 12)
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @gifs }
+    end
+  end
+
+  def tagged
+    @gifs = Gif.tagged_with(params[:tag]).paginate(page: params[:page], per_page: 12)
+
+    respond_to do |format|
+      format.html { render action: :index }
+      format.json { render json: @gifs }
+    end
   end
 
   # GET /gifs/1
   # GET /gifs/1.json
   def show
+    @next_gif = @gif.next
+    @prev_gif = @gif.prev
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @gif }
+      format.gif { redirect_to @gif.url }
+    end
+  end
+
+  def random
+    @gif   = Gif.tagged_with(params[:tag].parameterize).order("RAND()").first
+    @gif ||= Gif.order("RAND()").first
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @gif }
+      format.gif { redirect_to @gif.url }
+    end
   end
 
   # GET /gifs/new
@@ -25,13 +59,14 @@ class GifsController < ApplicationController
   # POST /gifs.json
   def create
     @gif = Gif.new(gif_params)
+    @gif.user = current_user
 
     respond_to do |format|
       if @gif.save
         format.html { redirect_to @gif, notice: 'Gif was successfully created.' }
-        format.json { render :show, status: :created, location: @gif }
+        format.json { render action: 'show', status: :created, location: @gif }
       else
-        format.html { render :new }
+        format.html { render action: 'new' }
         format.json { render json: @gif.errors, status: :unprocessable_entity }
       end
     end
@@ -42,10 +77,16 @@ class GifsController < ApplicationController
   def update
     respond_to do |format|
       if @gif.update(gif_params)
-        format.html { redirect_to @gif, notice: 'Gif was successfully updated.' }
-        format.json { render :show, status: :ok, location: @gif }
+        format.html do
+          if params[:commit].include? "More"
+            redirect_to edit_gif_path(Gif.untagged.first), notice: 'Gif was successfully updated.'
+          else
+            redirect_to @gif, notice: 'Gif was successfully updated.'
+          end
+        end
+        format.json { head :no_content }
       else
-        format.html { render :edit }
+        format.html { render action: 'edit' }
         format.json { render json: @gif.errors, status: :unprocessable_entity }
       end
     end
@@ -56,7 +97,7 @@ class GifsController < ApplicationController
   def destroy
     @gif.destroy
     respond_to do |format|
-      format.html { redirect_to gifs_url, notice: 'Gif was successfully destroyed.' }
+      format.html { redirect_to gifs_url }
       format.json { head :no_content }
     end
   end
@@ -69,6 +110,6 @@ class GifsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def gif_params
-      params.require(:gif).permit(:url)
+      params.require(:gif).permit(:url, :tag_list)
     end
 end
