@@ -1,9 +1,12 @@
 <p class="text-muted text-center">Do you have what it takes to <%= link_to "add to this magical archive", new_gif_path %>?</p>
 
-<% @gifs.each_slice(3) do |gifs| %>
+  <div class="row">
+<div class="col-md-9">
+
+<% @gifs.each_slice(4) do |gifs| %>
   <div class="row">
     <% gifs.each do |gif| %>
-      <div class="col-xs-4">
+      <div class="col-md-3">
         <div class="crop">
           <%= link_to image_tag(gif.url, class: "img-responsive"), gif %>
         </div>
@@ -14,3 +17,13 @@
 
 <br />
 <%= will_paginate @gifs, renderer: BootstrapPagination::Rails %>
+</div>
+<div class="col-md-3">
+  <div id="tag_cloud">
+    <h1>Browse Gifs by Category</h1>
+    <% tag_cloud Gif.tag_counts, %w{s m l} do |tag, css_class| %>
+      <%= link_to tag.name, tagged_gifs_path(tag.name), class: css_class %>
+    <% end %>
+  </div>
+</div>
+</div>

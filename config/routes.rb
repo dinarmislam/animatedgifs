@@ -7,6 +7,6 @@ Rails.application.routes.draw do
   end
 
   get "/:tag", to: "gifs#random"
-
+  get 'tags/:tag', to: 'gifs#random', as: :tag
   root to: "gifs#index"
 end

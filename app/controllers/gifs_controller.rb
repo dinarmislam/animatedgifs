@@ -6,7 +6,7 @@ class GifsController < ApplicationController
   # GET /gifs.json
   def index
     @gifs = Gif.sorted.paginate(page: params[:page], per_page: 12)
-
+    
     respond_to do |format|
       format.html
       format.json { render json: @gifs }
